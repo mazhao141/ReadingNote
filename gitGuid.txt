@@ -41,13 +41,11 @@ git config --global user.name 或者 user.email
 3）.将远程仓库克隆至本地: git clone repository的网址。在clone or donwload下。然后你就有了一个工作目录
 4）.提交代码。git add .
 			git commit -m "描述"
-			git push origin master //origin 指远程版本库的Git 地址 master 指要同步的分支
-			然后输入用户密码就可以了。
+			git push origin master origin 指远程版本库的Git地址,指网址 master 指要同步的分支然后输入用户密码就可以了。
 5）.把远程库的修改同步到本地
-			git fetch origin master同步的结果会放在 origin/master 分支上
+			git fetch origin master 同步的结果会放在 origin/master 分支上
 			git diff origin/master 查看修改了哪些内容
-			git merge origin/master 把修改合并到现在的分支上
-	直接同步并且合并
+			git merge origin/master 把修改合并到现在的分支上直接同步并且合并
 			git pull origin master
 
 
