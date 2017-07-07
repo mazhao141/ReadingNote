@@ -1,0 +1,90 @@
+ls -l
+total 68
+drwxrwxr-x 15 mazhao mazhao 4096 6月  21 10:08 .
+drwxrwxr-x  6 mazhao mazhao 4096 6月  20 23:03 ..
+drwxrwxr-x  3 mazhao mazhao 4096 6月  11 22:45 add-ons
+drwxrwxr-x  3 mazhao mazhao 4096 6月  11 20:15 build-tools
+drwxrwxr-x 21 mazhao mazhao 4096 6月  20 23:05 docs
+drwxrwxr-x  7 mazhao mazhao 4096 6月  20 23:13 emulator
+drwxrwxr-x  5 mazhao mazhao 4096 6月  20 23:20 extras
+-rw-rw-r--  1 mazhao mazhao   16 6月  21 10:14 .knownPackages
+drwxrwxr-x  2 mazhao mazhao 4096 6月  21 10:08 licenses
+drwxrwxr-x  3 mazhao mazhao 4096 6月  20 23:10 patcher
+drwxrwxr-x  4 mazhao mazhao 4096 6月  21 10:08 platforms
+drwxrwxr-x  5 mazhao mazhao 4096 6月  20 23:05 platform-tools
+-rw-rw-r--  1 mazhao mazhao 1158 10月 14  2015 SDK Readme.txt
+drwxrwxr-x  3 mazhao mazhao 4096 6月  11 21:52 sources
+drwxrwxr-x  4 mazhao mazhao 4096 6月  11 21:55 system-images
+drwxrwxr-x  2 mazhao mazhao 4096 6月  11 22:45 temp
+drwxrwxr-x  6 mazhao mazhao 4096 6月  20 23:10 tools
+
+第一个字符代表了文件类型
+-代表文件
+d代表文件目录
+l代表链接
+c代表字符型设备
+b代表块设备
+n代表网络设备
+
+然后是三组权限描述符 rwx 分别依次对应 文件主 组成员 其他用户的权限
+
+除了rwx三个描述符以外，文件和目录还可以有s t 两个属性
+
+s可以出现在文件拥有者的x权限位上 被成为 Set UID or SUID
+出现在组的x权限位上 被称为 Set GID or SGID
+
+这两个位仅仅对二进制的可执行程序有效
+
+设置的SUID以后
+执行者对文件有x的可执行权限
+执行权限仅仅在执行该程序的过程中有效
+执行者将拥有该程序拥有者的权限
+
+比如说 su 命令
+无论任何人执行了这个命令都将获得root权限。原因就是
+
+-rwsr-xr-x 1 root root 40128 5月  17 07:37 /bin/su
+
+设置文件SUID 可以 chmod u+s
+
+SGID 与SUID 类似但是 可以用在目录权限上  下面详细说
+
+文件夹的 rwx权限：
+r: 表示具有读取目录结构列表的权限。也就是说这个权限你可以查看文件夹下的文件或者目录数量，大小等等。
+   说白了就是可以在这个文件夹下面执行ls命令
+w: 表示可以写入目录。也就是说你可以在这个文件夹里：
+   1）.新建文件与目录
+   2）.删除已经存在的文件与路径
+   3）.将已经存在的文件或者目录重命名
+   4）.转移文件夹内文件或者目录的位置
+x: 表示可以cd 进这个目录作为工作目录
+
+目录没有SUID 只有SGID
+一个目录设置了SGID以后:
+1）.若用户对此目录拥有r与x权限时，该用户可以进入该目录并且该用户在此目录下的有效用户组将变为这个目录的用户组
+2）.如果用户在此目录下拥有w的权限，则用户所创建的新文件的用户组与目录用户组相同。
+
+目录的 t权限
+全称Sticky BIT 仅仅对目录有效。目录设置t权限时
+如果用户对此目录有w和x的权限。那么就拥有写的权限
+如果用户在此目录下创建了文件或者目录，那么仅有自己与root可以删除
+典型的应用就是 /tmp目录。
+
+   
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

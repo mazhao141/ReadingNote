@@ -1,0 +1,56 @@
+1.Git 安装
+sudo apt-get install git-core
+
+2.创建代码仓库
+
+git config --global user.name "mazhao141"
+git config --global user.email "mz13593571869@hotmail.com"
+
+查询
+git config --global user.name 或者 user.email
+
+给项目创建代码仓库
+1）.进入代码的目录
+2）.git init
+然后就会在该目录下生成一个.git 隐藏目录
+
+3.提交本地代码
+1）.add 将想要提交的代码添加进缓冲。 git add 目录 或者单个文件
+2）.commit 真正的提交代码	git commit -m "提交描述" 描述是必要的
+
+4.基本用法
+1）.忽略文件：在.git目录下有一个.gitignore文件。在里面添加目录和文件，注意是以.git的目录为根目录
+可以使用*作为通配符。
+2）.git status 查看commit之前的修改记录。
+3）.git diff 文件相对目录 查看单个文件的修改。
+4）.git checkout 文件相对目录 撤销对单个文件的修改
+5）.git reset HEAD 文件目录 撤销对文件的提交。只有撤销之后才能撤销对文件的修改。
+6）.git log 查看了仓库的提交记录。
+	只想查看单个记录的时候 git log 记录id -1 。查看具体的修改内容 在结尾加-p
+
+5.创建分支
+1）.查询分支 git branch -a *后代表当前工作的分支
+2）.创建分支 git branch version1.0
+3）.切换分支 git checkout version1.0
+4）.合并分支 git merge master 把master中代码的修改实现到 当前分支 目前是version1.0
+5）.删除分支 git branch -D version1.0
+
+6.将代码托管到GitHub上
+1）.首先登陆GitHub的个人主页
+2）.创建一个新的仓库 repository
+3）.将远程仓库克隆至本地: git clone repository的网址。在clone or donwload下。然后你就有了一个工作目录
+4）.提交代码。git add .
+			git commit -m "描述"
+			git push origin master //origin 指远程版本库的Git 地址 master 指要同步的分支
+			然后输入用户密码就可以了。
+5）.把远程库的修改同步到本地
+			git fetch origin master同步的结果会放在 origin/master 分支上
+			git diff origin/master 查看修改了哪些内容
+			git merge origin/master 把修改合并到现在的分支上
+	直接同步并且合并
+			git pull origin master
+
+
+
+
+
