@@ -48,6 +48,8 @@ git config --global user.name 或者 user.email
 			git diff origin/master 查看修改了哪些内容
 			git merge origin/master 把修改合并到现在的分支上直接同步并且合并
 			git pull origin master
+			
+gxx already read this note!
 
 
 
