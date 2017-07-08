@@ -23,4 +23,14 @@
 		Iface 就是Interface 接口的意思。
 		
 2.如何获取自己的MAC
-	ifconfig wlp7s0
+	$ifconfig wlp7s0
+	wlp7s0    Link encap:Ethernet  HWaddr 30:3a:64:9f:86:7a  
+			  inet addr:192.168.1.103  Bcast:192.168.1.255  Mask:255.255.255.0
+			  inet6 addr: fe80::bd8b:42e1:db4a:1a2b/64 Scope:Link
+			  UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+			  RX packets:3567 errors:0 dropped:0 overruns:0 frame:0
+			  TX packets:3232 errors:0 dropped:0 overruns:0 carrier:0
+			  collisions:0 txqueuelen:1000 
+			  RX bytes:4874124 (4.8 MB)  TX bytes:333695 (333.6 KB)
+
+	MAC在局域网内生效，并且如果有转发的情况发生。那么源MAC和目标MAC都会发生变化。
