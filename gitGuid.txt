@@ -22,7 +22,8 @@ git config --global user.name 或者 user.email
 1）.忽略文件：在.git目录下有一个.gitignore文件。在里面添加目录和文件，注意是以.git的目录为根目录
 可以使用*作为通配符。
 2）.git status 查看commit之前的修改记录。
-3）.git diff 文件相对目录 查看单个文件的修改。
+3）.git diff 文件相对目录 查看单个文件的修改。注意一旦使用 git add 命令。那么修改就会生效。并且checkout命令将会失效。
+	如果想要撤销add 请用下面的reset命令。
 4）.git checkout 文件相对目录 撤销对单个文件的修改
 5）.git reset HEAD 文件目录 撤销对文件的提交。只有撤销之后才能撤销对文件的修改。
 6）.git log 查看了仓库的提交记录。
