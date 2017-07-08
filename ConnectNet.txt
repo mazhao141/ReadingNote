@@ -1,0 +1,26 @@
+1.主机路由 route
+	-n 参数表示主机将以IP的形式显示
+	$route
+	Kernel IP routing table
+	Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+	default         bogon           0.0.0.0         UG    600    0        0 wlp7s0
+	link-local      *               255.255.0.0     U     1000   0        0 wlp7s0
+	192.168.1.0     *               255.255.255.0   U     600    0        0 wlp7s0
+	
+	$route -n
+	Kernel IP routing table
+	Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+	0.0.0.0         192.168.1.1     0.0.0.0         UG    600    0        0 wlp7s0
+	169.254.0.0     0.0.0.0         255.255.0.0     U     1000   0        0 wlp7s0
+	192.168.1.0     0.0.0.0         255.255.255.0   U     600    0        0 wlp7s0
+
+	字段意义：
+		Destination 其实就是Network的意思。代表目的地网络，表示我要到达这个网络时应该使用哪个接口
+		Gateway 该接口的网关。如果是0.0.0.0则表示不需要额外的IP
+		Flags U 表示该路由可用
+			  G 表示该网络需要经过网关来帮忙传递
+			  H 表示该路由行为是一台主机而非一个网络
+		Iface 就是Interface 接口的意思。
+		
+2.如何获取自己的MAC
+	ifconfig wlp7s0
