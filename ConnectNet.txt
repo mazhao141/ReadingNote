@@ -1,4 +1,29 @@
+一、网络接口设置（以下设置每个发行版都不同。下面列出的来自于ubuntu手册）
+1、ip地址设置
+	1、设置成使用DHCP动态获取IP
+		sudo vim /etc/network/interfaces
+		加入
+			auto enp6s0
+			iface enp6s0 inet dhcp
+	2、设置成静态IP
+		加入
+			auto enp6s0
+			iface enp6s0 inet static
+			address 192.168.3.3
+			netmask 255.255.255.0
+			gateway 192.168.3.1
+			dns-search example.com sales.example.com dev.example.com
+			dns-nameservers 192.168.3.45 192.168.8.10
+	3、使网卡设置生效
+		sudo ifdown enp6s0
+		sudo ifup enp6s0
+2、dns服务器设置
+	在/etc/resolv.conf中添加
+	nameserver 192.168.1.1
+二、命令们
 1.主机路由 route
+	1.查询主机路由参数
+	如果想要查找某个网络接口的网关则应使用这个命令。
 	-n 参数表示主机将以IP的形式显示
 	$route
 	Kernel IP routing table
@@ -17,12 +42,24 @@
 	字段意义：
 		Destination 其实就是Network的意思。代表目的地网络，表示我要到达这个网络时应该使用哪个接口
 		Gateway 该接口的网关。如果是0.0.0.0则表示不需要额外的IP
-		Flags U 表示该路由可用
-			  G 表示该网络需要经过网关来帮忙传递
-			  H 表示该路由行为是一台主机而非一个网络
+		Flags U (route is up)表示该路由可用
+			  G (use gateway)表示该网络需要经过网关来帮忙传递
+			  H (target is a host)目标是一台主机（IP）而非网络
+			  R (reinstate route for dynamic routing)使用动态路由的时候，回复路由信息的标志。
+			  D (dynamically installed by daemon or redirect)动态路由
+			  M (modified from routing daemon or redirect)路由已经被修改了
+			  ! (reject route)这个路由将不会被接受（用于阻止不安全的网络）
 		Iface 就是Interface 接口的意思。
+	
+	注意路由表是有序的。从上倒下依次是
+		默认路由
+		Class B 大网络路由
+		Class C 小网路由
+		所以你要注意网段问题。比如YaHoo 119.160.246.241 不是Class B也不是Class A。他会直接从默认路由发走
+		但是如果是 192.168.1.20 那会先找到 182.168.1.0这个网络的路由。
 		
-2.如何获取自己的MAC
+2.ifconfig
+	1.查看网卡参数
 	$ifconfig wlp7s0
 	wlp7s0    Link encap:Ethernet  HWaddr 30:3a:64:9f:86:7a  
 			  inet addr:192.168.1.103  Bcast:192.168.1.255  Mask:255.255.255.0
@@ -34,3 +71,92 @@
 			  RX bytes:4874124 (4.8 MB)  TX bytes:333695 (333.6 KB)
 
 	MAC在局域网内生效，并且如果有转发的情况发生。那么源MAC和目标MAC都会发生变化。
+	也就是说，比如说你想要访问Baidu。实际上在以太网头部也就是电脑MAC送到了你自己的路由的MAC上。
+	只是再由路由器按照IP头。更改源MAC和MAC再转发。
+	2.设置网卡参数
+	ifconfig enp6s0 192.168.1.5
+	会给一个临时的参数并且给默认的 netmask network broadcast
+	其余 MTU 等也可以使用这个命令进行设置。man
+
+3.ip
+	综合了 ifconfig 和 route 命令。
+	ip [option] 对象 [command]
+		option :设置的参数 
+			-s 显示出设备的统计数据。例如接受数据包的总数等。
+		对象:
+			link:与设备相关的设置。包括MTU MAC等等
+			addr/address:关于额外的IP协议。比如多IP的实现等。
+			route:与路由相关的设置。
+		command:命令是和具体对象相关的。有何命令可以使用如 ip link help查看。
+		
+		然后我们可以看到 ip link set { DEVICE | dev DEVICE | group DEVGROUP } [ { up | down } ]
+		于是可以使用 ip link set enp6s0 up来启动网卡。
+		[ { up | down } ]的其他选项包括  [ address LLADDR ] 来设置MAC地址。
+		
+		1.如果想添加虚拟IP ip address add 虚拟IP broadcast + dev enp6s0 label 虚拟名称
+		
+		2.实际上如果想要查看具体的帮助 man ip 的最下面可以看到 ip address 命令实际上就是 ip-address
+		可以 man ip-address 查看具体的帮助。
+
+4.iwlist: 利用无线网卡进行无线AP的检测并取得相关数据。
+5.iwconfig: 设置无线网卡的相关参数
+6.dhclient:命令网卡向 DHCP服务器获取IP。
+7.dig 向DNS服务器请求 解析域名 比如 dig www.baidu.com
+8.ping 首先可以去ping 公网IP
+	-c 数值，执行ping的次数
+	-n 不进行IP与主机名的反查。直接以IP输出
+	-s 送出的数据包大小。默认56字节
+	-t TTL的数值。数据包的生存周期，每过一个节点减1。默认255
+9.tracerroute 两个主机之间的节点分析
+	-n 使用IP而不是主机名
+	-U 使用UDP协议的port 33434 来进行检测
+	-I 使用ICMP的方式来进行检测
+	-T 使用TCP的方式检测 port 80
+	-w 后面是数字，在对方几秒内没有回应时声明不通。
+	-p 端口号。如果不想用UDP或者TCP默认的端口号可以在这里改。
+	-i 设备。在主机不止有一个网卡连接到internet时选择使用哪一个网络设备做测试。、
+	-g 路由。与i参数相仿。只是后面要跟gateway的IP。
+	
+	eg:traceroute -n www.baidu.com。会经过30个节点。每个节点三次测试时间。如果是***那么对方可能使用了防火墙。
+10.netstat 查看本机的网络连接与后门。
+	-r 列出路由表
+	-n 使用IP而不是主机名称
+	-a 列出所有的连接状态。包括tcp udp unix socket
+	-t 仅列出TCP数据包的连接
+	-u 仅列出UDP数据包的连接
+	-l 仅列出已经在监听(listen)的网络服务
+	-p 列出PID与program的文件名
+	-c 可以设置几秒钟后更新一次。
+	
+	eg:route -an
+
+三、协议们
+3.ICMP 协议
+	（Internet Control Message Protocol）英特网信息控制协议。ping命令的实质就是ICMP协议。
+		0 Echo Reply
+		3 Destination Unreachable *  
+		4 Source Quench *
+        5 Redirect
+        8 Echo Request
+        B Time Exceeded *
+        C Parameter Problem *
+        D Timestamp Request
+		E Timestamp Reply
+		F Info Request
+		G Info Reply
+        H Address Mask Request
+        I Address Mask Reply
+        
+4.TCP 的三次握手。
+	链接建立的过程就是握手。
+	A.客户端向服务端发一个请求链接的数据包。
+	B.服务器接收到之后会返回一个特殊内容的应答包。
+	C.客户端收到之后再返回一个应答包
+	D.服务器收到之后连接建立。
+	
+5.UDP的一问一答。
+	UDP是一问一答的！所以不存在连接建立这一说。
+	
+
+
+	
