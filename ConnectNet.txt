@@ -107,7 +107,7 @@
 	-n 不进行IP与主机名的反查。直接以IP输出
 	-s 送出的数据包大小。默认56字节
 	-t TTL的数值。数据包的生存周期，每过一个节点减1。默认255
-9.tracerroute 两个主机之间的节点分析
+9.traceroute 两个主机之间的节点分析
 	-n 使用IP而不是主机名
 	-U 使用UDP协议的port 33434 来进行检测
 	-I 使用ICMP的方式来进行检测
@@ -116,7 +116,7 @@
 	-p 端口号。如果不想用UDP或者TCP默认的端口号可以在这里改。
 	-i 设备。在主机不止有一个网卡连接到internet时选择使用哪一个网络设备做测试。、
 	-g 路由。与i参数相仿。只是后面要跟gateway的IP。
-	
+		
 	eg:traceroute -n www.baidu.com。会经过30个节点。每个节点三次测试时间。如果是***那么对方可能使用了防火墙。
 10.netstat 查看本机的网络连接与后门。
 	-r 列出路由表
@@ -128,8 +128,43 @@
 	-p 列出PID与program的文件名
 	-c 可以设置几秒钟后更新一次。
 	
-	eg:route -an
-
+	eg:netstat -an
+	
+	字段：
+	Proto 协议类型。tcp udp unix socket等
+	Recv-Q 由非用户程序连接所复制而来的总bytes数
+	Send-Q 由远程主机发送而来。但不具有ACK标志的总bytes数。也指主动连接SYN或者其他标志
+		   的数据包所占的bytes数
+	Local Address 本地端的地址。可以是IP(-n选项)。也可以是完整的主机名。IP:port
+	Foreign Address 远程的主机IP与port number
+	stat 状态。
+		ESTABLISED 已建立的连接。
+		SYN_SENT 发出主动连接(SYN)的数据包
+		SYN_RECV 接收到一个要求连接的主动连接数据包
+		FIN_WAIT1 该套接字已经中断。该连接正在断线中。
+		FIN_WAIT2 该连接已经挂断。但正在等待对方主机响应断线确认的数据包
+		TIME_WAIT 该连接已挂断。但socket还在网络上等待结束。
+		LISTEN 通常用在服务的监听 port 可以使用-l参数查阅。
+		
+	1.显示目前已经启动的网络服务
+		$netstat -tulnp
+		如此可以知道哪个程序启动了哪些端口了。
+		$netstat -atunp
+		Proto Recv-Q Send-Q Local Address 		Foreign Address S	tate 		PID/Program
+		tcp		0		52	192.168.1.100:22	192.168.1.101:1937	ESTABLISED	4716/0
+		...
+		这是一条已经建立的连接。它由远程主机192.168.1.101启动的一个大于1024的端口向本地端主机192.168.1.100的port 22
+		发起的一条连接。Client端是随机开放一个大于1024的port进行连接。此外只有root可以启动小于1024的port。如果想要断开
+		这条连接可以职业kill 4716。
+		
+		服务名与port number 的对应关系是由/etc/services
+11.host 可以查出某个主机名对应的IP。
+	host [-a] hostname [server]
+	-a 可以列出主机详细的各项主机名设置数据
+	[server] 可以使用不是由/etc/resolv.conf 文件定义的DNS服务器IP来查询。
+12.nslookup 用样用于查询主机名和其对应的IP。同样使用/etc/resolv.conf来作为DNS服务器来源选择。
+	可以逆向查询
+	nslookup 127.0.0.1 可以查出 name=localhost
 三、协议们
 3.ICMP 协议
 	（Internet Control Message Protocol）英特网信息控制协议。ping命令的实质就是ICMP协议。
